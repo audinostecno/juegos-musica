@@ -5,6 +5,17 @@ import random
 # Configuración de la página
 st.set_page_config(page_title="Juegos Musicales - LAC", page_icon="🎮", layout="centered")
 
+# Inyectar CSS para poner fondo blanco a las imágenes transparentes
+st.markdown("""
+    <style>
+    img {
+        background-color: white;
+        border-radius: 10px;
+        padding: 10px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # Cabecera con tu avatar
 col1, col2 = st.columns([1, 4])
 with col1:

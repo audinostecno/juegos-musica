@@ -116,9 +116,9 @@ elif juego_actual == "2. La Escalera de Notas":
         else:
             st.warning("Ya completaste este nivel.")
 
-# --- NIVEL 3: PENTAGRAMA VISUAL (ALEATORIO) ---
+# --- NIVEL 3: PENTAGRAMA VISUAL ---
 elif juego_actual == "3. El Pentagrama Visual":
-    st.header("🎼 Nivel 3: El Pentagrama (Aleatorio)")
+    st.header("🎼 Nivel 3: El Pentagrama")
     st.write("Mirá la imagen, prestá atención a la clave y a las alteraciones, y descubrí qué nota es. ¡Cada vez que jugás son distintas!")
     
     respuestas_n3 = []

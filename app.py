@@ -20,7 +20,7 @@ def buscar_archivo(nombre_base, tipo="audio"):
         for ext in extensiones:
             if os.path.exists(f"{var}{ext}"):
                 return f"{var}{ext}"
-    return None # Si no encuentra nada
+    return None
 
 # Inyectar CSS
 st.markdown("""
@@ -73,7 +73,6 @@ if 'preguntas_n5' not in st.session_state: st.session_state.preguntas_n5 = rando
 if 'pregunta_n6' not in st.session_state: st.session_state.pregunta_n6 = random.choice(banco_ritmos)
 if 'pregunta_n8' not in st.session_state: st.session_state.pregunta_n8 = random.choice(banco_alturas)
 
-# --- GENERADOR DEL MAZO DE MEMOTEST SEGÚN MODALIDAD ---
 def generar_mazo(modalidad):
     deck = []
     for inst in instrumentos_memotest:
@@ -97,7 +96,7 @@ st.sidebar.title("📌 Menú de Desafíos")
 juego_actual = st.sidebar.radio("Elegí un nivel:", 
     ["1. Historia y Orígenes", "2. La Escalera de Notas", "3. El Pentagrama Visual", 
      "4. Sonido, Eco y Figuras", "5. Calculadora de Intervalos", "6. 📝 Dictado Rítmico", 
-     "7. 🃏 Memotest de Instrumentos", "8. ⚖️ Batalla: Grave vs Agudo", "🛠️ Radar de Archivos (Profe)"])
+     "7. 🃏 Memotest de Instrumentos", "8. ⚖️️ Batalla: Grave vs Agudo"])
 
 st.sidebar.markdown("---")
 st.sidebar.title(f"🏆 Puntaje total: {st.session_state.puntaje}")
@@ -106,13 +105,13 @@ if st.sidebar.button("Jugar de nuevo (Mezclar todo)"):
     st.rerun()
 
 # ==================================
-# JUEGOS CLÁSICOS (1 AL 5 Resumidos por espacio visual)
+# JUEGOS CLÁSICOS
 # ==================================
 if juego_actual in ["1. Historia y Orígenes", "2. La Escalera de Notas", "3. El Pentagrama Visual", "4. Sonido, Eco y Figuras", "5. Calculadora de Intervalos"]:
     st.info("¡Seleccioná los niveles interactivos (6, 7 y 8) para ver las nuevas funciones!")
 
 # ==================================
-# 6. DICTADO RÍTMICO (Ahora obliga a mostrar las imágenes)
+# 6. DICTADO RÍTMICO
 # ==================================
 elif juego_actual == "6. 📝 Dictado Rítmico":
     st.header("📝 Nivel 6: Correspondencia Rítmica")
@@ -127,7 +126,6 @@ elif juego_actual == "6. 📝 Dictado Rítmico":
     random.shuffle(opciones_visuales)
     
     colA, colB, colC = st.columns(3)
-    # Obligamos a cargar la imagen, si no existe saltará el ícono de imagen rota que nos permite darnos cuenta
     with colA: 
         try: st.image(opciones_visuales[0], caption="Opción A") 
         except: st.error(f"Falta {opciones_visuales[0]}")
@@ -152,14 +150,13 @@ elif juego_actual == "6. 📝 Dictado Rítmico":
         else: st.warning("Ya completaste este nivel.")
 
 # ==================================
-# 7. MEMOTEST (3 Modos + Escondite Automático)
+# 7. MEMOTEST
 # ==================================
 elif juego_actual == "7. 🃏 Memotest de Instrumentos":
     st.header("🃏 Nivel 7: Memotest")
     
     modo_seleccionado = st.radio("Elegí la modalidad:", ["1. Imagen vs Nombre", "2. Sonido vs Imagen", "3. Sonido vs Nombre"], horizontal=True)
     
-    # Si cambias de modo, se reinicia el mazo
     if 'memo_modo_actual' not in st.session_state or st.session_state.memo_modo_actual != modo_seleccionado:
         st.session_state.memo_modo_actual = modo_seleccionado
         st.session_state.memo_deck = generar_mazo(modo_seleccionado)
@@ -203,20 +200,19 @@ elif juego_actual == "7. 🃏 Memotest de Instrumentos":
                         st.session_state.memo_flipped.append(i)
                         st.rerun()
 
-    # LOGICA DE AUTO-ESCONDITE (Se ejecuta después de dibujar las cartas)
     if len(st.session_state.memo_flipped) == 2:
         c1, c2 = st.session_state.memo_flipped
         if deck[c1]['id'] == deck[c2]['id']:
             st.success("¡Pareja encontrada!")
-            time.sleep(1.5) # Espera un segundo y medio para que el chico la vea
+            time.sleep(1.5)
             st.session_state.memo_matched.extend([c1, c2])
             st.session_state.memo_flipped = []
-            st.rerun() # Se actualiza sola
+            st.rerun()
         else:
             st.error("No coinciden...")
-            time.sleep(1.5) # Espera un segundo y medio
+            time.sleep(1.5)
             st.session_state.memo_flipped = []
-            st.rerun() # Se esconden solas
+            st.rerun()
 
     if len(st.session_state.memo_matched) == 8 and "nivel7" not in st.session_state.juegos_completados:
         st.session_state.puntaje += 30
@@ -225,7 +221,7 @@ elif juego_actual == "7. 🃏 Memotest de Instrumentos":
         st.balloons()
 
 # ==================================
-# 8. BATALLA GRAVE VS AGUDO (Buscador inteligente)
+# 8. BATALLA GRAVE VS AGUDO
 # ==================================
 elif juego_actual == "8. ⚖️ Batalla: Grave vs Agudo":
     st.header("⚖️ Nivel 8: Batalla de Alturas")
@@ -262,27 +258,3 @@ elif juego_actual == "8. ⚖️ Batalla: Grave vs Agudo":
                     st.balloons()
                 else: st.error("Ups, ese era el más agudo.")
         else: st.warning("Ya completaste este nivel.")
-
-# ==================================
-# HERRAMIENTA PARA EL PROFE
-# ==================================
-elif juego_actual == "🛠️ Radar de Archivos (Profe)":
-    st.header("🛠️ Panel de Diagnóstico")
-    st.write("Si ves algo en ROJO, significa que ese archivo no está subido a GitHub o tiene el nombre mal escrito.")
-    
-    st.subheader("Audios del Memotest y Grave/Agudo")
-    for inst in instrumentos_memotest + ["tuba", "contrabajo", "trombon"]:
-        if buscar_archivo(inst, "audio"): st.success(f"✔️ {inst} (Audio OK)")
-        else: st.error(f"❌ Falta audio de: {inst}")
-            
-    st.subheader("Imágenes de Instrumentos")
-    for inst in instrumentos_memotest:
-        if buscar_archivo(inst, "imagen"): st.success(f"✔️ {inst} (Imagen OK)")
-        else: st.error(f"❌ Falta imagen de: {inst}")
-            
-    st.subheader("Dictados Rítmicos")
-    for r in banco_ritmos:
-        if buscar_archivo(r['audio'], "audio"): st.success(f"✔️ Audio: {r['audio']}")
-        else: st.error(f"❌ Falta audio: {r['audio']}")
-        if buscar_archivo(r['img_correcta'].replace(".png",""), "imagen"): st.success(f"✔️ Imagen: {r['img_correcta']}")
-        else: st.error(f"❌ Falta imagen: {r['img_correcta']}")

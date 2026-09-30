@@ -27,7 +27,7 @@ st.markdown("""
     <style>
     /* 1. Comprimir espacios y evitar que choque arriba */
     .block-container {
-        padding-top: 3rem !important; /* Le da aire arriba al logo de Juan y al título */
+        padding-top: 5.5rem !important; /* EMPUJA TODO HACIA ABAJO para que no se corte el título */
         padding-bottom: 1rem !important;
         max-width: 750px !important; 
     }
@@ -95,7 +95,6 @@ st.markdown("""
     /* Ajustar los títulos para que no tengan tanto margen */
     h1 {
         padding-top: 0 !important;
-        margin-top: -10px !important;
     }
 
     /* Badges de Puntaje */
@@ -108,7 +107,7 @@ st.markdown("""
         font-size: 18px;
         font-weight: bold;
         box-shadow: 0 4px 10px rgba(255,107,107,0.3);
-        margin-bottom: 5px;
+        margin-bottom: 25px !important; /* SEPARACIÓN DEL BOTÓN DE REINICIAR */
     }
     
     /* Cajas de Feedback más pequeñas */

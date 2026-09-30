@@ -517,7 +517,8 @@ elif juego_actual == "6. 📝 Dictado Rítmico":
             st.markdown(f"<div class='feedback-box feedback-incorrect'><b>Incorrecto.</b> El ritmo que sonó correspondía a <b>{ritmo_actual['img_correcta'].replace('.png','')}</b>.</div>", unsafe_allow_html=True)
 
 # ==================================
-# 7. MEMOTEST
+# ==================================
+# 7. MEMOTEST INTERACTIVO (ESCUCHA ACTIVA)
 # ==================================
 elif juego_actual == "7. 🃏 Memotest de Instrumentos":
     st.header("🃏 Nivel 7: Memotest de Instrumentos")
@@ -573,39 +574,67 @@ elif juego_actual == "7. 🃏 Memotest de Instrumentos":
                         if os.path.exists(deck[i]['valor']):
                             st.audio(deck[i]['valor'])
 
-                # Caso 3: Carta boca abajo (dorso) - Al tocar la tarjeta se da vuelta directamente
+                # Caso 3: Carta boca abajo (dorso)
                 else:
                     if dorso_img and os.path.exists(dorso_img):
                         st.image(dorso_img, use_container_width=True)
                     else:
                         st.markdown("🎴 **Música**")
                         
-                    if st.button("👆 Tocar", key=f"memo_btn_{i}", use_container_width=True):
-                        if len(st.session_state.memo_flipped) < 2:
+                    # Solo permitimos tocar si hay menos de 2 cartas volteadas
+                    if len(st.session_state.memo_flipped) < 2:
+                        if st.button("👆 Tocar", key=f"memo_btn_{i}", use_container_width=True):
                             st.session_state.memo_flipped.append(i)
                             st.rerun()
+                    else:
+                        # Botón deshabilitado mientras se evalúan las 2 cartas
+                        st.button("⏳ Esperando...", key=f"memo_btn_disabled_{i}", disabled=True, use_container_width=True)
 
-    # Evaluar cuando hay 2 cartas abiertas
+    # --- NUEVA MECÁNICA: EVALUACIÓN MANUAL DEL ALUMNO ---
     if len(st.session_state.memo_flipped) == 2:
         c1, c2 = st.session_state.memo_flipped
-        if deck[c1]['id'] == deck[c2]['id']:
-            st.success("¡Pareja encontrada!")
-            time.sleep(1.0)
-            st.session_state.memo_matched.extend([c1, c2])
-            st.session_state.memo_flipped = []
-            st.rerun()
-        else:
-            st.error("No coinciden...")
-            time.sleep(1.2)
-            st.session_state.memo_flipped = []
-            st.rerun()
+        es_pareja_real = (deck[c1]['id'] == deck[c2]['id'])
+        
+        st.markdown("---")
+        st.markdown("<h3 style='text-align: center;'>🤔 ¿Hacen pareja estas dos cartas?</h3>", unsafe_allow_html=True)
+        st.write("Tómate tu tiempo para escuchar y mirar bien. Luego elegí tu veredicto:")
+        
+        col_btn1, col_btn2 = st.columns(2)
+        
+        with col_btn1:
+            if st.button("✅ SÍ, coinciden", use_container_width=True, type="primary"):
+                if es_pareja_real:
+                    st.success("¡Excelente oído! Encontraste una pareja (+5 pts)")
+                    st.session_state.puntaje += 5
+                    st.session_state.memo_matched.extend([c1, c2])
+                else:
+                    st.error("¡Ups! No coinciden. Hay que prestar más atención (-2 pts)")
+                    st.session_state.puntaje = max(0, st.session_state.puntaje - 2)
+                
+                time.sleep(2)
+                st.session_state.memo_flipped = []
+                st.rerun()
+                
+        with col_btn2:
+            if st.button("❌ NO, son distintas", use_container_width=True):
+                if not es_pareja_real:
+                    st.info("¡Bien escuchado! No hacían pareja. Seguí buscando.")
+                    # No sumamos puntos para no inflar el puntaje solo por decir que "no", 
+                    # pero premiamos limpiando el tablero rápido.
+                else:
+                    st.warning("¡Ay! En realidad SÍ eran pareja. Te perdiste esta (-2 pts)")
+                    st.session_state.puntaje = max(0, st.session_state.puntaje - 2)
+                
+                time.sleep(2)
+                st.session_state.memo_flipped = []
+                st.rerun()
 
+    # Chequeo de victoria final
     if len(st.session_state.memo_matched) == 8 and "nivel7" not in st.session_state.juegos_completados:
-        st.session_state.puntaje += 30
+        st.session_state.puntaje += 20
         st.session_state.juegos_completados.append("nivel7")
-        st.success("🎉 ¡Completaste el Memotest! Sumaste 30 puntos.")
+        st.success("🎉 ¡Completaste el Memotest! Sumaste 20 puntos extra por terminar.")
         st.balloons()
-
 # ==================================
 # 8. BATALLA GRAVE VS AGUDO
 # ==================================

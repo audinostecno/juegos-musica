@@ -22,32 +22,35 @@ def buscar_archivo(nombre_base, tipo="audio"):
                 return f"{var}{ext}"
     return None
 
-# --- INYECTAR CSS MEJORADO ---
+# --- INYECTAR CSS MEJORADO (Adaptable a Modo Claro y Oscuro) ---
 st.markdown("""
     <style>
-    /* 1. Comprimir espacios muertos de la app en general */
+    /* 1. Comprimir espacios para que no se vea GIGANTE en la PC */
     .block-container {
-        padding-top: 1.5rem !important;
+        padding-top: 1rem !important;
         padding-bottom: 1rem !important;
-        max-width: 650px !important; /* Ideal para Moodle y celulares */
+        max-width: 750px !important; 
     }
     
-    .stApp { background-color: #f8f9fa; }
+    /* Aplastar el espacio vacío gigante que Streamlit pone entre los elementos */
+    [data-testid="stVerticalBlock"] {
+        gap: 0.3rem !important;
+    }
     
     /* 2. Achicar las cartas y juntar sus elementos internos */
     [data-testid="stVerticalBlockBorderWrapper"] {
-        padding: 0.4rem !important; /* Menos relleno en las cartas */
+        padding: 0.3rem !important; 
     }
     [data-testid="stVerticalBlockBorderWrapper"] div {
-        gap: 0.1rem !important; /* Elementos internos más pegados */
+        gap: 0.1rem !important; 
     }
     
     /* 3. Limitar estrictamente el tamaño de las imágenes */
     img { 
-        background-color: white; 
+        background-color: white; /* Mantiene el fondo blanco solo para las fotos de los instrumentos */
         border-radius: 8px; 
         padding: 4px;
-        max-height: 65px !important; /* ¡Clave para que no se estiren! */
+        max-height: 60px !important; /* Tope de altura para PC */
         width: auto;
         object-fit: contain;
         margin: 0 auto;
@@ -55,47 +58,38 @@ st.markdown("""
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     } 
     
-    /* 4. Botones más finitos y compactos */
+    /* 4. Botones extra finitos y compactos */
     .stButton>button { 
         width: 100%; 
         border-radius: 8px;
         font-weight: bold; 
-        padding: 0.1rem !important; /* Botón menos alto */
-        min-height: 32px !important;
+        padding: 0.1rem !important; 
+        min-height: 28px !important;
         transition: all 0.2s ease-in-out;
     }
 
-    /* Reproductor de audio compacto para las cartas */
+    /* 5. Reproductor de audio ultra compacto */
     audio {
         width: 100% !important;
-        height: 35px !important;
+        height: 30px !important;
     }
     
-    /* 5. FORZAR GRILLA EN CELULARES (Evita que el memotest sea una columna larga) */
-    @media (max-width: 600px) {
-        [data-testid="column"] {
-            min-width: calc(25% - 0.5rem) !important;
-            flex: 1 1 calc(25% - 0.5rem) !important;
-        }
-    }
-    
-    /* Modificación de la barra lateral */
+    /* Quitar fondos forzados para que el Modo Oscuro/Claro funcione automáticamente */
     [data-testid="stSidebar"] {
-        background-color: #ffffff;
         border-right: 1px solid #e9ecef;
     }
 
     /* Badges de Puntaje */
     .score-badge {
         background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-        color: white;
+        color: white; /* Este texto siempre es blanco porque el fondo es naranja/rojo oscuro */
         padding: 8px 15px;
         border-radius: 12px;
         text-align: center;
         font-size: 18px;
         font-weight: bold;
         box-shadow: 0 4px 10px rgba(255,107,107,0.3);
-        margin-bottom: 15px;
+        margin-bottom: 5px;
     }
     
     /* Cajas de Feedback más pequeñas */
@@ -248,22 +242,22 @@ if juego_actual == "1. Historia y Orígenes":
         st.subheader("📋 Resultados de tu Intento:")
         
         if q1_user == "Siria":
-            st.markdown("<div class='feedback-box feedback-correct'><b>1. Correcto! (+10 pts)</b> La partitura más antigua (Himno Hurrita) se halló en la antigua Ugarit, Siria.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='feedback-box feedback-correct'><b>1. Correcto! (+10 pts)</b> La partitura más antigua se halló en Ugarit, Siria.</div>", unsafe_allow_html=True)
         else:
             st.markdown(f"<div class='feedback-box feedback-incorrect'><b>1. Incorrecto.</b> Elegiste: {q1_user or 'Sin responder'}. La respuesta correcta era <b>Siria</b>.</div>", unsafe_allow_html=True)
 
         if q2_user == "Guido D'Arezzo":
-            st.markdown("<div class='feedback-box feedback-correct'><b>2. Correcto! (+10 pts)</b> Guido D'Arezzo creó el sistema de notación musical usando el Himno a San Juan Bautista.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='feedback-box feedback-correct'><b>2. Correcto! (+10 pts)</b> Guido D'Arezzo creó el sistema de notación musical.</div>", unsafe_allow_html=True)
         else:
             st.markdown(f"<div class='feedback-box feedback-incorrect'><b>2. Incorrecto.</b> Elegiste: {q2_user or 'Sin responder'}. La respuesta correcta era <b>Guido D'Arezzo</b>.</div>", unsafe_allow_html=True)
 
         if q3_user == "Porque Do era más fácil de pronunciar":
-            st.markdown("<div class='feedback-box feedback-correct'><b>3. Correcto! (+10 pts)</b> 'Ut' fue cambiado por 'Do' (de Dominus) para facilitar el solfeo vocal.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='feedback-box feedback-correct'><b>3. Correcto! (+10 pts)</b> 'Ut' fue cambiado por 'Do' para facilitar el solfeo vocal.</div>", unsafe_allow_html=True)
         else:
             st.markdown(f"<div class='feedback-box feedback-incorrect'><b>3. Incorrecto.</b> Elegiste: {q3_user or 'Sin responder'}. La respuesta correcta era <b>Porque Do era más fácil de pronunciar</b>.</div>", unsafe_allow_html=True)
 
 # ==================================
-# 2. LA ESCALERA DE NOTAS (ALEATORIO)
+# 2. LA ESCALERA DE NOTAS
 # ==================================
 elif juego_actual == "2. La Escalera de Notas":
     st.header("🪜 Nivel 2: Grados Conjuntos")
@@ -312,7 +306,7 @@ elif juego_actual == "2. La Escalera de Notas":
 # ==================================
 elif juego_actual == "3. El Pentagrama Visual":
     st.header("🎼 Nivel 3: El Pentagrama")
-    st.write("Mirá la imagen, prestá atención a la clave y a las alteraciones, y descubrí qué nota es. ¡Cada vez que jugás son distintas!")
+    st.write("Mirá la imagen, prestá atención a la clave y a las alteraciones, y descubrí qué nota es.")
     
     resp_guardadas = st.session_state.respuestas_guardadas.get("nivel3", {})
     completado = "nivel3" in st.session_state.juegos_completados
@@ -352,7 +346,7 @@ elif juego_actual == "3. El Pentagrama Visual":
             if seleccion == correcta:
                 st.markdown(f"<div class='feedback-box feedback-correct'><b>Pregunta {i+1}: ¡Correcto! (+10 pts)</b> Es {correcta}.</div>", unsafe_allow_html=True)
             else:
-                st.markdown(f"<div class='feedback-box feedback-incorrect'><b>Pregunta {i+1}: Incorrecto.</b> Elegiste '{seleccion or 'Sin responder'}'. La nota correcta es <b>{correcta}</b>.</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='feedback-box feedback-incorrect'><b>Pregunta {i+1}: Incorrecto.</b> La nota correcta es <b>{correcta}</b>.</div>", unsafe_allow_html=True)
 
 # ==================================
 # 4. SONIDO, ECO Y FIGURAS
@@ -386,17 +380,17 @@ elif juego_actual == "4. Sonido, Eco y Figuras":
         q1_u, q2_u, q3_u = resp_guardadas.get("q1"), resp_guardadas.get("q2"), resp_guardadas.get("q3")
         
         if q1_u == "El eco repite la palabra clara, la reverberación alarga el sonido":
-            st.markdown("<div class='feedback-box feedback-correct'><b>1. Correcto! (+10 pts)</b> El eco tiene una reflexión diferida clara, la reverberación la alarga inmediatamente.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='feedback-box feedback-correct'><b>1. Correcto! (+10 pts)</b></div>", unsafe_allow_html=True)
         else:
-            st.markdown(f"<div class='feedback-box feedback-incorrect'><b>1. Incorrecto.</b> La respuesta correcta era <b>El eco repite la palabra clara, la reverberación alarga el sonido</b>.</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='feedback-box feedback-incorrect'><b>1. Incorrecto.</b> La respuesta era <b>El eco repite la palabra clara, la reverberación alarga el sonido</b>.</div>", unsafe_allow_html=True)
             
         if q2_u == "Intensidad":
-            st.markdown("<div class='feedback-box feedback-correct'><b>2. Correcto! (+10 pts)</b> La intensidad define el volumen (fuerte / suave).</div>", unsafe_allow_html=True)
+            st.markdown("<div class='feedback-box feedback-correct'><b>2. Correcto! (+10 pts)</b></div>", unsafe_allow_html=True)
         else:
             st.markdown(f"<div class='feedback-box feedback-incorrect'><b>2. Incorrecto.</b> La cualidad correcta es <b>Intensidad</b>.</div>", unsafe_allow_html=True)
             
         if q3_u == "Redonda":
-            st.markdown("<div class='feedback-box feedback-correct'><b>3. Correcto! (+10 pts)</b> La Redonda dura 4 tiempos (la de mayor duración de las opciones).</div>", unsafe_allow_html=True)
+            st.markdown("<div class='feedback-box feedback-correct'><b>3. Correcto! (+10 pts)</b></div>", unsafe_allow_html=True)
         else:
             st.markdown(f"<div class='feedback-box feedback-incorrect'><b>3. Incorrecto.</b> La figura de mayor duración es la <b>Redonda</b>.</div>", unsafe_allow_html=True)
 
@@ -440,7 +434,7 @@ elif juego_actual == "5. Calculadora de Intervalos":
         st.subheader("📋 Resultados de tu Intento:")
         q_c_u = resp_guardadas.get("q_compas")
         if q_c_u == "Compuesto":
-            st.markdown("<div class='feedback-box feedback-correct'><b>1. Correcto! (+10 pts)</b> El compás de 6/8 tiene subdivisión ternaria, por lo que es Compuesto.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='feedback-box feedback-correct'><b>1. Correcto! (+10 pts)</b></div>", unsafe_allow_html=True)
         else:
             st.markdown("<div class='feedback-box feedback-incorrect'><b>1. Incorrecto.</b> El 6/8 es un compás <b>Compuesto</b>.</div>", unsafe_allow_html=True)
             
@@ -448,7 +442,7 @@ elif juego_actual == "5. Calculadora de Intervalos":
             if r == c:
                 st.markdown(f"<div class='feedback-box feedback-correct'><b>{i+2}. Correcto! (+10 pts)</b> {p} -> {c}.</div>", unsafe_allow_html=True)
             else:
-                st.markdown(f"<div class='feedback-box feedback-incorrect'><b>{i+2}. Incorrecto.</b> Para '{p}' elegiste '{r or 'Sin responder'}'. La distancia correcta es <b>{c}</b>.</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='feedback-box feedback-incorrect'><b>{i+2}. Incorrecto.</b> La distancia correcta es <b>{c}</b>.</div>", unsafe_allow_html=True)
 
 # ==================================
 # 6. DICTADO RÍTMICO
@@ -520,9 +514,9 @@ elif juego_actual == "6. 📝 Dictado Rítmico":
         st.subheader("📋 Resultados de tu Intento:")
         elegida_img = resp_guardadas.get("elegida_img")
         if elegida_img == ritmo_actual['img_correcta']:
-            st.markdown("<div class='feedback-box feedback-correct'><b>¡Excelente oído rítmico! (+20 pts)</b> Identificaste correctamente la figura del ritmo.</div>", unsafe_allow_html=True)
+            st.markdown("<div class='feedback-box feedback-correct'><b>¡Excelente oído rítmico! (+20 pts)</b></div>", unsafe_allow_html=True)
         else:
-            st.markdown(f"<div class='feedback-box feedback-incorrect'><b>Incorrecto.</b> El ritmo que sonó correspondía a <b>{ritmo_actual['img_correcta'].replace('.png','')}</b>.</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='feedback-box feedback-incorrect'><b>Incorrecto.</b> El ritmo correspondía a <b>{ritmo_actual['img_correcta'].replace('.png','')}</b>.</div>", unsafe_allow_html=True)
 
 # ==================================
 # 7. MEMOTEST INTERACTIVO (ESCUCHA ACTIVA)
@@ -545,7 +539,7 @@ elif juego_actual == "7. 🃏 Memotest de Instrumentos":
     deck = st.session_state.memo_deck
     dorso_img = buscar_archivo("logo_audinos_abreviado_color_sin_letras", "imagen")
     
-    # Grid de 4x2 con ESPACIO REDUCIDO (gap="small")
+    # Grid de 4x2 con ESPACIO REDUCIDO
     cols = st.columns(4, gap="small")
     for i in range(8):
         with cols[i % 4]:
@@ -553,14 +547,14 @@ elif juego_actual == "7. 🃏 Memotest de Instrumentos":
             with card_container:
                 # Caso 1: Carta ya emparejada
                 if i in st.session_state.memo_matched:
-                    st.markdown("✅ **¡Encontrada!**")
+                    st.markdown("✅ **Lista**")
                     if deck[i]['tipo'] == 'img':
                         if os.path.exists(deck[i]['valor']):
                             st.image(deck[i]['valor'], use_container_width=True)
                         else:
                             st.info(deck[i]['id'].upper())
                     elif deck[i]['tipo'] == 'texto':
-                        st.markdown(f"### {deck[i]['valor']}")
+                        st.markdown(f"**{deck[i]['valor']}**")
                     elif deck[i]['tipo'] == 'audio':
                         st.markdown("🔊 **Sonido**")
                         if os.path.exists(deck[i]['valor']):
@@ -575,7 +569,7 @@ elif juego_actual == "7. 🃏 Memotest de Instrumentos":
                         else:
                             st.info(deck[i]['id'].upper())
                     elif deck[i]['tipo'] == 'texto':
-                        st.markdown(f"### {deck[i]['valor']}")
+                        st.markdown(f"**{deck[i]['valor']}**")
                     elif deck[i]['tipo'] == 'audio':
                         st.markdown("🔊 **Sonido**")
                         if os.path.exists(deck[i]['valor']):
@@ -594,43 +588,41 @@ elif juego_actual == "7. 🃏 Memotest de Instrumentos":
                             st.session_state.memo_flipped.append(i)
                             st.rerun()
                     else:
-                        # Botón deshabilitado mientras se evalúan las 2 cartas
                         st.button("⏳", key=f"memo_btn_disabled_{i}", disabled=True, use_container_width=True)
 
-    # --- NUEVA MECÁNICA: EVALUACIÓN MANUAL DEL ALUMNO ---
+    # --- EVALUACIÓN MANUAL DEL ALUMNO ---
     if len(st.session_state.memo_flipped) == 2:
         c1, c2 = st.session_state.memo_flipped
         es_pareja_real = (deck[c1]['id'] == deck[c2]['id'])
         
         st.markdown("---")
-        st.markdown("<h4 style='text-align: center; margin-top: -15px;'>🤔 ¿Hacen pareja estas dos cartas?</h4>", unsafe_allow_html=True)
-        st.write("Tómate tu tiempo para escuchar y mirar bien. Luego elegí tu veredicto:")
+        st.markdown("<h4 style='text-align: center; margin-top: -15px;'>🤔 ¿Hacen pareja?</h4>", unsafe_allow_html=True)
         
         col_btn1, col_btn2 = st.columns(2)
         
         with col_btn1:
-            if st.button("✅ SÍ, coinciden", use_container_width=True, type="primary"):
+            if st.button("✅ SÍ", use_container_width=True, type="primary"):
                 if es_pareja_real:
-                    st.success("¡Excelente oído! Encontraste una pareja (+5 pts)")
+                    st.success("¡Excelente! (+5 pts)")
                     st.session_state.puntaje += 5
                     st.session_state.memo_matched.extend([c1, c2])
                 else:
-                    st.error("¡Ups! No coinciden. Hay que prestar más atención (-2 pts)")
+                    st.error("¡Ups! No coinciden. (-2 pts)")
                     st.session_state.puntaje = max(0, st.session_state.puntaje - 2)
                 
-                time.sleep(2)
+                time.sleep(1.5)
                 st.session_state.memo_flipped = []
                 st.rerun()
                 
         with col_btn2:
-            if st.button("❌ NO, son distintas", use_container_width=True):
+            if st.button("❌ NO", use_container_width=True):
                 if not es_pareja_real:
-                    st.info("¡Bien escuchado! No hacían pareja. Seguí buscando.")
+                    st.info("¡Bien escuchado! Seguí buscando.")
                 else:
-                    st.warning("¡Ay! En realidad SÍ eran pareja. Te perdiste esta (-2 pts)")
+                    st.warning("¡Ay! SÍ eran pareja. (-2 pts)")
                     st.session_state.puntaje = max(0, st.session_state.puntaje - 2)
                 
-                time.sleep(2)
+                time.sleep(1.5)
                 st.session_state.memo_flipped = []
                 st.rerun()
 
@@ -638,7 +630,7 @@ elif juego_actual == "7. 🃏 Memotest de Instrumentos":
     if len(st.session_state.memo_matched) == 8 and "nivel7" not in st.session_state.juegos_completados:
         st.session_state.puntaje += 20
         st.session_state.juegos_completados.append("nivel7")
-        st.success("🎉 ¡Completaste el Memotest! Sumaste 20 puntos extra por terminar.")
+        st.success("🎉 ¡Completaste el Memotest! (+20 pts)")
         st.balloons()
 
 # ==================================
@@ -704,6 +696,6 @@ elif juego_actual == "8. ⚖️ Batalla: Grave vs Agudo":
         seleccionado = opciones[0] if u_q8 == "Instrumento A" else opciones[1]
         
         if seleccionado == batalla['grave']:
-            st.markdown(f"<div class='feedback-box feedback-correct'><b>¡Exacto! (+20 pts)</b> El {batalla['grave'].replace('_', ' ')} es más grave que el {batalla['agudo'].replace('_', ' ')}.</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='feedback-box feedback-correct'><b>¡Exacto! (+20 pts)</b> El {batalla['grave'].replace('_', ' ')} es más grave.</div>", unsafe_allow_html=True)
         else:
-            st.markdown(f"<div class='feedback-box feedback-incorrect'><b>Incorrecto.</b> Elegiste {u_q8} ({seleccionado.replace('_', ' ')}), pero el instrumento más grave era el <b>{batalla['grave'].replace('_', ' ')}</b>.</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='feedback-box feedback-incorrect'><b>Incorrecto.</b> El instrumento más grave era <b>{batalla['grave'].replace('_', ' ')}</b>.</div>", unsafe_allow_html=True)

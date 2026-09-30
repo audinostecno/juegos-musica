@@ -25,25 +25,58 @@ def buscar_archivo(nombre_base, tipo="audio"):
 # --- INYECTAR CSS MEJORADO ---
 st.markdown("""
     <style>
-    /* Estilos globales */
-    .stApp {
-        background-color: #f8f9fa;
+    /* 1. Comprimir espacios muertos de la app en general */
+    .block-container {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1rem !important;
+        max-width: 650px !important; /* Ideal para Moodle y celulares */
     }
     
-    /* Contenedor e imágenes */
+    .stApp { background-color: #f8f9fa; }
+    
+    /* 2. Achicar las cartas y juntar sus elementos internos */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        padding: 0.4rem !important; /* Menos relleno en las cartas */
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] div {
+        gap: 0.1rem !important; /* Elementos internos más pegados */
+    }
+    
+    /* 3. Limitar estrictamente el tamaño de las imágenes */
     img { 
         background-color: white; 
-        border-radius: 12px; 
-        padding: 6px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border-radius: 8px; 
+        padding: 4px;
+        max-height: 65px !important; /* ¡Clave para que no se estiren! */
+        width: auto;
+        object-fit: contain;
+        margin: 0 auto;
+        display: block;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     } 
     
-    /* Botones principales */
+    /* 4. Botones más finitos y compactos */
     .stButton>button { 
         width: 100%; 
-        border-radius: 10px;
+        border-radius: 8px;
         font-weight: bold; 
+        padding: 0.1rem !important; /* Botón menos alto */
+        min-height: 32px !important;
         transition: all 0.2s ease-in-out;
+    }
+
+    /* Reproductor de audio compacto para las cartas */
+    audio {
+        width: 100% !important;
+        height: 35px !important;
+    }
+    
+    /* 5. FORZAR GRILLA EN CELULARES (Evita que el memotest sea una columna larga) */
+    @media (max-width: 600px) {
+        [data-testid="column"] {
+            min-width: calc(25% - 0.5rem) !important;
+            flex: 1 1 calc(25% - 0.5rem) !important;
+        }
     }
     
     /* Modificación de la barra lateral */
@@ -56,47 +89,25 @@ st.markdown("""
     .score-badge {
         background: linear-gradient(135deg, #FF6B6B, #FF8E53);
         color: white;
-        padding: 12px 20px;
-        border-radius: 15px;
+        padding: 8px 15px;
+        border-radius: 12px;
         text-align: center;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
         box-shadow: 0 4px 10px rgba(255,107,107,0.3);
-        margin-bottom: 20px;
-    }
-
-    /* Cards para Memotest y Niveles */
-    .memo-card {
-        background-color: white;
-        border: 2px solid #e9ecef;
-        border-radius: 12px;
-        padding: 10px;
-        text-align: center;
-        min-height: 140px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        margin-bottom: 15px;
     }
     
+    /* Cajas de Feedback más pequeñas */
     .feedback-box {
-        padding: 12px 16px;
+        padding: 10px 14px;
         border-radius: 10px;
-        margin-top: 8px;
-        margin-bottom: 12px;
-        font-size: 15px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        font-size: 14px;
     }
-    .feedback-correct {
-        background-color: #d4edda;
-        color: #155724;
-        border-left: 5px solid #28a745;
-    }
-    .feedback-incorrect {
-        background-color: #f8d7da;
-        color: #721c24;
-        border-left: 5px solid #dc3545;
-    }
+    .feedback-correct { background-color: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+    .feedback-incorrect { background-color: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -146,7 +157,7 @@ banco_alturas = [
     {"grave": "contrabajo", "agudo": "violin"}
 ]
 
-# --- INICUALIZAR MEMORIA ---
+# --- INICIALIZAR MEMORIA ---
 if 'puntaje' not in st.session_state: st.session_state.puntaje = 0
 if 'juegos_completados' not in st.session_state: st.session_state.juegos_completados = []
 if 'respuestas_guardadas' not in st.session_state: st.session_state.respuestas_guardadas = {}
@@ -236,19 +247,16 @@ if juego_actual == "1. Historia y Orígenes":
 
         st.subheader("📋 Resultados de tu Intento:")
         
-        # Feedback Q1
         if q1_user == "Siria":
             st.markdown("<div class='feedback-box feedback-correct'><b>1. Correcto! (+10 pts)</b> La partitura más antigua (Himno Hurrita) se halló en la antigua Ugarit, Siria.</div>", unsafe_allow_html=True)
         else:
             st.markdown(f"<div class='feedback-box feedback-incorrect'><b>1. Incorrecto.</b> Elegiste: {q1_user or 'Sin responder'}. La respuesta correcta era <b>Siria</b>.</div>", unsafe_allow_html=True)
 
-        # Feedback Q2
         if q2_user == "Guido D'Arezzo":
             st.markdown("<div class='feedback-box feedback-correct'><b>2. Correcto! (+10 pts)</b> Guido D'Arezzo creó el sistema de notación musical usando el Himno a San Juan Bautista.</div>", unsafe_allow_html=True)
         else:
             st.markdown(f"<div class='feedback-box feedback-incorrect'><b>2. Incorrecto.</b> Elegiste: {q2_user or 'Sin responder'}. La respuesta correcta era <b>Guido D'Arezzo</b>.</div>", unsafe_allow_html=True)
 
-        # Feedback Q3
         if q3_user == "Porque Do era más fácil de pronunciar":
             st.markdown("<div class='feedback-box feedback-correct'><b>3. Correcto! (+10 pts)</b> 'Ut' fue cambiado por 'Do' (de Dominus) para facilitar el solfeo vocal.</div>", unsafe_allow_html=True)
         else:
@@ -517,7 +525,6 @@ elif juego_actual == "6. 📝 Dictado Rítmico":
             st.markdown(f"<div class='feedback-box feedback-incorrect'><b>Incorrecto.</b> El ritmo que sonó correspondía a <b>{ritmo_actual['img_correcta'].replace('.png','')}</b>.</div>", unsafe_allow_html=True)
 
 # ==================================
-# ==================================
 # 7. MEMOTEST INTERACTIVO (ESCUCHA ACTIVA)
 # ==================================
 elif juego_actual == "7. 🃏 Memotest de Instrumentos":
@@ -538,8 +545,8 @@ elif juego_actual == "7. 🃏 Memotest de Instrumentos":
     deck = st.session_state.memo_deck
     dorso_img = buscar_archivo("logo_audinos_abreviado_color_sin_letras", "imagen")
     
-    # Grid de 4x2
-    cols = st.columns(4)
+    # Grid de 4x2 con ESPACIO REDUCIDO (gap="small")
+    cols = st.columns(4, gap="small")
     for i in range(8):
         with cols[i % 4]:
             card_container = st.container(border=True)
@@ -583,12 +590,12 @@ elif juego_actual == "7. 🃏 Memotest de Instrumentos":
                         
                     # Solo permitimos tocar si hay menos de 2 cartas volteadas
                     if len(st.session_state.memo_flipped) < 2:
-                        if st.button("👆 Tocar", key=f"memo_btn_{i}", use_container_width=True):
+                        if st.button("👆", key=f"memo_btn_{i}", use_container_width=True):
                             st.session_state.memo_flipped.append(i)
                             st.rerun()
                     else:
                         # Botón deshabilitado mientras se evalúan las 2 cartas
-                        st.button("⏳ Esperando...", key=f"memo_btn_disabled_{i}", disabled=True, use_container_width=True)
+                        st.button("⏳", key=f"memo_btn_disabled_{i}", disabled=True, use_container_width=True)
 
     # --- NUEVA MECÁNICA: EVALUACIÓN MANUAL DEL ALUMNO ---
     if len(st.session_state.memo_flipped) == 2:
@@ -596,7 +603,7 @@ elif juego_actual == "7. 🃏 Memotest de Instrumentos":
         es_pareja_real = (deck[c1]['id'] == deck[c2]['id'])
         
         st.markdown("---")
-        st.markdown("<h3 style='text-align: center;'>🤔 ¿Hacen pareja estas dos cartas?</h3>", unsafe_allow_html=True)
+        st.markdown("<h4 style='text-align: center; margin-top: -15px;'>🤔 ¿Hacen pareja estas dos cartas?</h4>", unsafe_allow_html=True)
         st.write("Tómate tu tiempo para escuchar y mirar bien. Luego elegí tu veredicto:")
         
         col_btn1, col_btn2 = st.columns(2)
@@ -619,8 +626,6 @@ elif juego_actual == "7. 🃏 Memotest de Instrumentos":
             if st.button("❌ NO, son distintas", use_container_width=True):
                 if not es_pareja_real:
                     st.info("¡Bien escuchado! No hacían pareja. Seguí buscando.")
-                    # No sumamos puntos para no inflar el puntaje solo por decir que "no", 
-                    # pero premiamos limpiando el tablero rápido.
                 else:
                     st.warning("¡Ay! En realidad SÍ eran pareja. Te perdiste esta (-2 pts)")
                     st.session_state.puntaje = max(0, st.session_state.puntaje - 2)
@@ -635,6 +640,7 @@ elif juego_actual == "7. 🃏 Memotest de Instrumentos":
         st.session_state.juegos_completados.append("nivel7")
         st.success("🎉 ¡Completaste el Memotest! Sumaste 20 puntos extra por terminar.")
         st.balloons()
+
 # ==================================
 # 8. BATALLA GRAVE VS AGUDO
 # ==================================

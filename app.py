@@ -22,22 +22,29 @@ def buscar_archivo(nombre_base, tipo="audio"):
                 return f"{var}{ext}"
     return None
 
-# --- INYECTAR CSS MEJORADO (Adaptable a Modo Claro y Oscuro) ---
+# --- INYECTAR CSS MEJORADO ---
 st.markdown("""
     <style>
-    /* 1. Comprimir espacios para que no se vea GIGANTE en la PC */
+    /* 1. Comprimir espacios y evitar que choque arriba */
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 3rem !important; /* Le da aire arriba al logo de Juan y al título */
         padding-bottom: 1rem !important;
         max-width: 750px !important; 
     }
     
-    /* Aplastar el espacio vacío gigante que Streamlit pone entre los elementos */
-    [data-testid="stVerticalBlock"] {
-        gap: 0.3rem !important;
+    /* MAGIA PARA PC: Si es una pantalla grande (compu), achica todo al 85% automáticamente */
+    @media (min-width: 768px) {
+        .block-container {
+            zoom: 0.85; 
+        }
     }
     
-    /* 2. Achicar las cartas y juntar sus elementos internos */
+    /* Aplastar el espacio vacío gigante entre los elementos */
+    [data-testid="stVerticalBlock"] {
+        gap: 0.4rem !important;
+    }
+    
+    /* 2. Achicar las CARTAS del memotest y juntar sus elementos internos */
     [data-testid="stVerticalBlockBorderWrapper"] {
         padding: 0.3rem !important; 
     }
@@ -45,18 +52,24 @@ st.markdown("""
         gap: 0.1rem !important; 
     }
     
-    /* 3. Limitar estrictamente el tamaño de las imágenes */
-    img { 
-        background-color: white; /* Mantiene el fondo blanco solo para las fotos de los instrumentos */
+    /* 3. Imágenes ESPECÍFICAS de las cartas (Memotest) */
+    /* Esto evita que aplaste al logo de Juan Cartoon de arriba */
+    [data-testid="stVerticalBlockBorderWrapper"] img { 
+        background-color: white; 
         border-radius: 8px; 
         padding: 4px;
-        max-height: 60px !important; /* Tope de altura para PC */
+        max-height: 65px !important; /* Solo achica los instrumentos */
         width: auto;
         object-fit: contain;
         margin: 0 auto;
         display: block;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     } 
+    
+    /* Regla general para no deformar imágenes sueltas */
+    img {
+        object-fit: contain;
+    }
     
     /* 4. Botones extra finitos y compactos */
     .stButton>button { 
@@ -71,18 +84,24 @@ st.markdown("""
     /* 5. Reproductor de audio ultra compacto */
     audio {
         width: 100% !important;
-        height: 30px !important;
+        height: 35px !important;
     }
     
-    /* Quitar fondos forzados para que el Modo Oscuro/Claro funcione automáticamente */
+    /* Quitar bordes y forzar barra lateral */
     [data-testid="stSidebar"] {
         border-right: 1px solid #e9ecef;
+    }
+
+    /* Ajustar los títulos para que no tengan tanto margen */
+    h1 {
+        padding-top: 0 !important;
+        margin-top: -10px !important;
     }
 
     /* Badges de Puntaje */
     .score-badge {
         background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-        color: white; /* Este texto siempre es blanco porque el fondo es naranja/rojo oscuro */
+        color: white; 
         padding: 8px 15px;
         border-radius: 12px;
         text-align: center;
